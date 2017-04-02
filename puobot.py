@@ -219,27 +219,27 @@ for tab, old in zip(tabovi, oldies):
     diff.extend(razlika)
 
 for i in diff:
-    pattern = re.compile('^(.*?) \[PDF\]')
+    pattern = re.compile(r'^(.*?) \[PDF\]')
     dijelovi = i.split('\t')
     if re.match(pattern, dijelovi[1]):
         ime_file = re.search(pattern, dijelovi[1]).group(1)
     else:
         ime_file = dijelovi[1]
-    ime_file = ime_file[:57] + '...'
     link = dijelovi[-1]
 
     if len(dijelovi) == 5:
         godina = dijelovi[0][-5:-1]
         kategorija = dijelovi[2]
-        free_len = 140 - 3 - len(godina) - len(kategorija)- len(ime_file) - 25
-        ime_zahvat = dijelovi[1][:free_len]
-        update = '-'.join([godina, ime_zahvat, kategorija, ime_file]) + ' ' + link
+        free_len = 140 - 3 - len(godina) - len(kategorija) - 24
+        if len(ime_file) > free_len:
+            ime_file = ime_file[:free_len-3] + '...'
+        update = '-'.join([godina, kategorija, ime_file]) + ' ' + link
     elif len(dijelovi) == 3:
-        free_len = 140 - 1 - len(ime_file) - 24
-        ime_zahvat = dijelovi[0][:free_len]
-        update = ime_zahvat + '-' + ime_file + ' ' + link
+        if len(ime_file) > 115:
+            ime_file = ime_file[:112] + '...'
+        update = ' '.join([ime_file, link])
     elif len(dijelovi) == 2:
-        ime_zahvata = dijelovi[0][:110]
+        ime_zahvata = dijelovi[0][:115]
         update = ' '.join([ime_zahvata, link])
     print(update)
     if args.twitter:
